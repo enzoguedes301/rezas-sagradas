@@ -41,28 +41,28 @@
       algumas plataformas leem como "esta venda é de outra pessoa". Esta
       operação não tem afiliados.
     -->
+    <script>
+      // Proteção: se Utmify falhar, não trava a página
+      window.pixelId = '6a93b250765099f9ea9b9f8c';
+      const timeout = setTimeout(() => {
+        console.log('Utmify timeout - continuando sem rastreio');
+      }, 5000);
+    </script>
     <script
       src="https://cdn.utmify.com.br/scripts/utms/latest.js"
       data-utmify-prevent-xcod-sck
       data-utmify-prevent-subids
       async
       defer
+      onerror="clearTimeout(timeout)"
     ></script>
-    <script>
-      // O id da conta vai numa global porque é assim que o script deles o lê —
-      // não há atributo nem parâmetro. Precisa existir ANTES de o script subir,
-      // senão o pixel arranca sem conta e fica mudo.
-      window.pixelId = '6a93b250765099f9ea9b9f8c';
-    </script>
-    <script src="https://cdn.utmify.com.br/scripts/pixel/pixel.js" async defer></script>
+    <script src="https://cdn.utmify.com.br/scripts/pixel/pixel.js" async defer onerror="clearTimeout(timeout)"></script>
     <!-- Adiantar o aperto de mão com o CDN da Utmify: os dois scripts acima são
          pedidos na primeira linha, e a conexão já estar de pé poupa o TLS. -->
     <link rel="preconnect" href="https://cdn.utmify.com.br">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="image" href="/images/capa.webp">
-    <link rel="preload" as="image" href="/images/capa-alternativa.webp">
     <!--
       AS FONTES NÃO SEGURAM MAIS A PRIMEIRA PINTURA.
 
@@ -89,6 +89,7 @@
     -->
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Work+Sans:wght@400;500;600&display=swap">
     <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Work+Sans:wght@400;500;600&display=swap">
+    <link rel="stylesheet" media="print" onload="this.media='all'" crossorigin href="/assets/index-a73tMFJezZoZ.css">
     <noscript>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Work+Sans:wght@400;500;600&display=swap">
     </noscript>
@@ -121,7 +122,6 @@
       wistia-player[media-id='sc2zwew6dx']:not(:defined) { background: center / contain no-repeat url('https://fast.wistia.com/embed/medias/sc2zwew6dx/swatch'); display: block; filter: blur(5px); padding-top:177.78%; }
       wistia-player[media-id='31rfb4n9yd']:not(:defined) { background: center / contain no-repeat url('https://fast.wistia.com/embed/medias/31rfb4n9yd/swatch'); display: block; filter: blur(5px); padding-top:177.78%; }
     </style>
-    <link rel="stylesheet" crossorigin href="/assets/index-a73tMFJezZoZ.css">
     <script type="module" crossorigin src="/assets/index-DR54rmNCx4Gw.js" defer></script>
     <script>
       // Lazy load para imagens e performance
