@@ -32,6 +32,28 @@
   # assume o endereço e mostra o quiz no lugar do texto legal.
   RewriteRule ^privacidade/?$ /privacidade.html [L]
 
+  # UM ARQUIVO AUSENTE DENTRO DE /assets/ TEM QUE DEVOLVER 404 DE VERDADE.
+  #
+  # Sem esta regra, a regra do SPA logo abaixo captura /assets/ junto com o
+  # resto: pedir um chunk que não existe mais devolvia o index.html com
+  # status 200 e Content-Type text/html. O navegador pediu um módulo
+  # JavaScript e recebeu HTML — o import() rejeita.
+  #
+  # Isso morde a cada publicação. O index.html é no-cache e os arquivos de
+  # assets/ são immutable por um ano; quem estiver com o documento velho em
+  # cache (aba aberta, ou o navegador interno do Instagram, que é por onde
+  # entra o tráfego pago) pede o chunk do build anterior. O bundle tem um
+  # retry que recarrega a página UMA vez e, se falhar de novo, relança o erro
+  # — e aí a tela fica branca, sem aviso nenhum.
+  #
+  # Com 404 de verdade o retry funciona como foi desenhado: recarrega, pega o
+  # index.html novo, acha os chunks novos e se recupera sozinho.
+  #
+  # A condição !-f é o que mantém isto seguro: arquivo que existe é servido
+  # normalmente, só o ausente vira 404.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^assets/ - [R=404,L]
+
   # Tudo o mais que não for um arquivo existente cai no funil.
   #
   # É isto que faz /pedido e /cakto abrirem: eles não são arquivos no disco,
