@@ -118,12 +118,30 @@
       wistia-player[media-id='sc2zwew6dx']:not(:defined) { background: center / contain no-repeat url('https://fast.wistia.com/embed/medias/sc2zwew6dx/swatch'); display: block; filter: blur(5px); padding-top:177.78%; }
       wistia-player[media-id='31rfb4n9yd']:not(:defined) { background: center / contain no-repeat url('https://fast.wistia.com/embed/medias/31rfb4n9yd/swatch'); display: block; filter: blur(5px); padding-top:177.78%; }
     </style>
-    <script type="module" crossorigin src="/assets/index-DR54rmNCx4Gw.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-a73tMFJezZoZ.css">
+    <script type="module" crossorigin src="/assets/index-DR54rmNCx4Gw.js" defer></script>
+    <script>
+      // Lazy load para imagens e performance
+      document.documentElement.setAttribute('data-lazyload', 'true');
+      if ('loading' in HTMLImageElement.prototype === false) {
+        const imgs = document.querySelectorAll('img[loading="lazy"]');
+        if (IntersectionObserver) {
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                entry.target.src = entry.target.dataset.src || entry.target.src;
+                observer.unobserve(entry.target);
+              }
+            });
+          });
+          imgs.forEach(img => observer.observe(img));
+        }
+      }
+    </script>
   </head>
   <!-- A cor de fundo sai de src/index.css (var --color-fundo), para acompanhar o tema. -->
   <body class="antialiased selection:bg-[#E5C158]/30">
-    <div id="root"></div>
+    <div id="root"></div>
   </body>
 </html>
 
