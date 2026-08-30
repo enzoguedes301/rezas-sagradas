@@ -51,14 +51,30 @@ const server = http.createServer((req, res) => {
 
     const headers = { 'Content-Type': contentType };
 
-    // Cache para assets com hash
+    // Cache agressivo para assets com hash
     if (req.url.includes('/assets/') && req.url.match(/-[a-zA-Z0-9]+\.(js|css|woff2?)$/)) {
       headers['Cache-Control'] = 'public, max-age=31536000, immutable';
-    } else if (req.url.match(/\.(webp|jpg|jpeg|png|gif|svg|mp3|pdf)$/)) {
-      headers['Cache-Control'] = 'public, max-age=2592000'; // 30 dias
-    } else {
-      headers['Cache-Control'] = 'no-cache, must-revalidate';
+      headers['ETag'] = `"${stats.mtime.getTime()}"`;
     }
+    // Imagens: cache longo, mas com validação
+    else if (req.url.match(/\.(webp|jpg|jpeg|png|gif|svg)$/)) {
+      headers['Cache-Control'] = 'public, max-age=8640000'; // 100 dias
+      headers['ETag'] = `"${stats.mtime.getTime()}"`;
+    }
+    // Mídia e docs: cache moderado
+    else if (req.url.match(/\.(mp3|pdf)$/)) {
+      headers['Cache-Control'] = 'public, max-age=2592000'; // 30 dias
+    }
+    // HTML: nunca cache
+    else {
+      headers['Cache-Control'] = 'no-cache, must-revalidate';
+      headers['ETag'] = `"${stats.mtime.getTime()}"`;
+    }
+
+    // Headers de performance e segurança
+    headers['X-Content-Type-Options'] = 'nosniff';
+    headers['X-Frame-Options'] = 'SAMEORIGIN';
+    headers['Referrer-Policy'] = 'strict-origin-when-cross-origin';
 
     // Compressão gzip
     const acceptEncoding = req.headers['accept-encoding'] || '';
