@@ -1,0 +1,7 @@
+# Mensagem para Você
+User-agent: *
+Disallow: /admin
+Disallow: /admin.html
+Disallow: /leads
+Disallow: /leads.html
+Disallow: /api/

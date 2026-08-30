@@ -1,0 +1,97 @@
+# =====================================================================
+# Funil "Mensagem para Você" — configuração do Apache (Hostinger)
+#
+# Este arquivo faz três coisas, e as três importam para o funil funcionar
+# fora da Vercel:
+#
+#   1. os endereços /pedido, /cakto e /privacidade abrirem de verdade;
+#   2. o site responder sempre em https;
+#   3. os arquivos com hash no nome ficarem em cache, e o index.html NÃO.
+#
+# Ele vive em public/ para que o `npm run build` o copie para dist/ — assim
+# o pacote que sobe já vem com ele, e ninguém precisa lembrar de criá-lo.
+# =====================================================================
+
+# --------------------------------------------------------------- HTTPS --
+# O Pixel do Meta e o script da Utmify só rodam em página segura, e o
+# checkout da Cakto recusa referer http. Sem esta regra, quem digitar o
+# domínio sem "https://" cai numa página onde o rastreio inteiro morre calado.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+</IfModule>
+
+# ------------------------------------------------------------- Rotas --
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # A política de privacidade é uma PÁGINA PRÓPRIA (privacidade.html), e não
+  # uma tela do funil. Precisa vir antes da regra do SPA, senão o React
+  # assume o endereço e mostra o quiz no lugar do texto legal.
+  RewriteRule ^privacidade/?$ /privacidade.html [L]
+
+  # Tudo o mais que não for um arquivo existente cai no funil.
+  #
+  # É isto que faz /pedido e /cakto abrirem: eles não são arquivos no disco,
+  # são caminhos que o JavaScript lê (src/lib/capa.ts). Sem esta regra o
+  # Apache devolve 404 — e um anúncio apontado para /cakto entrega erro para
+  # quem clicou, com o clique já pago.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^ /index.html [L]
+</IfModule>
+
+# -------------------------------------------------------------- Cache --
+<IfModule mod_expires.c>
+  ExpiresActive On
+
+  # Os arquivos de assets/ têm o hash do conteúdo no nome: mudou o conteúdo,
+  # muda o nome. Podem ficar guardados para sempre sem risco de servir versão
+  # velha, e é isso que faz a segunda visita abrir instantânea.
+  <FilesMatch "\.(js|css|woff2?)$">
+    ExpiresDefault "access plus 1 year"
+    Header set Cache-Control "public, immutable"
+  </FilesMatch>
+
+  # Imagens, áudio e PDFs: um mês. Eles NÃO têm hash no nome, então um prazo
+  # eterno faria uma troca de foto demorar um mês para aparecer.
+  <FilesMatch "\.(webp|jpe?g|png|gif|svg|mp3|pdf)$">
+    ExpiresDefault "access plus 1 month"
+  </FilesMatch>
+
+  # O index.html NUNCA fica em cache.
+  #
+  # É ele que aponta para os arquivos com hash. Guardado, o navegador de quem
+  # já visitou continuaria pedindo um assets/index-<hash-velho>.js que não
+  # existe mais depois da próxima publicação — e a página fica BRANCA. Foi
+  # exatamente esse defeito que apareceu aqui em 25/08/2026.
+  <FilesMatch "\.html$">
+    ExpiresDefault "access plus 0 seconds"
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+# --------------------------------------------------------- Compressão --
+# Este público chega por 4G de operadora. O JavaScript do funil tem ~314 kB e
+# cai para ~102 kB comprimido — três vezes menos tempo de tela branca.
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml
+  AddOutputFilterByType DEFLATE application/javascript application/json
+  AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# ------------------------------------------------------------ Tipos --
+# Alguns servidores compartilhados não conhecem estes de fábrica. Sem o tipo
+# certo, o navegador recusa o módulo JavaScript e o site não abre.
+<IfModule mod_mime.c>
+  AddType application/javascript .js
+  AddType audio/mpeg .mp3
+  AddType image/webp .webp
+</IfModule>
+
+# ---------------------------------------------------------- Segurança --
+# A listagem de diretório mostraria os PDFs dos produtos para quem digitasse
+# /entregas/ — o que se vende ali estaria de graça a um clique.
+Options -Indexes
