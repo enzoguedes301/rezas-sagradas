@@ -18,14 +18,44 @@
     <title>Sua mensagem está pronta</title>
 
     <!--
-      Este documento não carrega nenhum script de terceiro (30/08/2026).
-      O que havia aqui saiu inteiro, com os preconnect que o serviam.
+      A UTMIFY — captura de UTM (reinstalada em 30/08/2026).
 
-      Contas e ids ficam FORA deste comentário de propósito: comentário de
-      HTML vai inteiro para o navegador, como diz o cabeçalho lá em cima. O
-      registro do que saiu, e do que ainda vem de dentro do bundle, está na
-      mensagem do commit desta remoção.
+      É ela que guarda os parâmetros da URL de entrada para que a venda na
+      Cakto possa ser casada com o clique do anúncio. A venda chega até a
+      UTMify pelo lado da Cakto, não por aqui.
+
+      SÓ A CAPTURA DE UTM, SEM PIXEL. O bloco entregue pelo painel desta vez
+      não traz `globals` — ou seja, não define conta nenhuma numa variável
+      global e não carrega o segundo script (o pixel). Se um dia o pixel for
+      necessário, ele é um bloco separado e precisa ser pedido no painel.
+
+      ESCRITO POR EXTENSO, e não no base64 com XOR que o painel entrega. O
+      bloco de lá monta exatamente esta tag — foi decodificado antes de entrar
+      aqui, e o que ele fazia está todo à vista. Duas razões, as mesmas de
+      sempre: código que ninguém consegue ler não deveria rodar na página que
+      recebe o tráfego pago; e já houve uma cópia que chegou CORROMPIDA
+      (`globals[]` no lugar de `globals||[]`) e teria quebrado calada. A cópia
+      de hoje veio íntegra — conferida antes de decodificar.
+
+      OS ATRIBUTOS `data-utmify-prevent-*` NÃO SÃO ENFEITE: sem eles o script
+      acrescenta `xcod`, `sck` e `subid` aos links — campos de afiliado que
+      algumas plataformas leem como "esta venda é de outra pessoa". Esta
+      operação não tem afiliados.
+
+      AQUI NO <head>: o carimbo do anúncio só existe na PRIMEIRA carga, e
+      quanto antes o script subir, menor a chance de alguém sair antes de ele
+      guardar.
     -->
+    <script
+      src="https://cdn.utmify.com.br/scripts/utms/latest.js"
+      data-utmify-prevent-xcod-sck
+      data-utmify-prevent-subids
+      async
+      defer
+    ></script>
+    <!-- O script acima é pedido na primeira linha; a conexão já estar de pé
+         poupa o aperto de mão de TLS. -->
+    <link rel="preconnect" href="https://cdn.utmify.com.br">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
