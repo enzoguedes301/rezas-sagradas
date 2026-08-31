@@ -5,6 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Política de Privacidade — Mensagem para Você</title>
   <meta name="description" content="Como o Mensagem para Você coleta, usa e protege os seus dados.">
+
+  <!--
+    A UTMIFY — os mesmos dois blocos do index.html (30/08/2026).
+
+    ESTA PÁGINA É HTML ESTÁTICO, servida direto pelo Apache (a regra
+    ^privacidade/?$ no .htaccess), e não uma tela do funil em React. Por isso
+    as tags precisam ser repetidas aqui: o bundle nunca roda neste documento,
+    então nada do que está em assets/ alcança quem abre a política.
+
+    Decodificados do base64 com XOR que o painel entrega, pelo mesmo motivo
+    registrado no index.html: código ilegível não deveria rodar numa página
+    do funil, e já houve uma cópia corrompida que teria quebrado calada.
+
+    A ORDEM IMPORTA: o id da conta é lido de uma variável global, então ele
+    precisa existir antes de o pixel subir.
+  -->
+  <script
+    src="https://cdn.utmify.com.br/scripts/utms/latest.js"
+    data-utmify-prevent-xcod-sck
+    data-utmify-prevent-subids
+    async
+    defer
+  ></script>
+  <script>
+    window.pixelId = '6a94e57dc93fd0e080baafca';
+  </script>
+  <script src="https://cdn.utmify.com.br/scripts/pixel/pixel.js" async defer></script>
+  <link rel="preconnect" href="https://cdn.utmify.com.br">
   <style>
     /* Este público lê no celular, muitas vezes com a fonte do sistema aumentada.
        Corpo de 17px e linha de 1.7 são o mínimo para não cansar. */

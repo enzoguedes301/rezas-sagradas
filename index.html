@@ -24,10 +24,9 @@
       Cakto possa ser casada com o clique do anúncio. A venda chega até a
       UTMify pelo lado da Cakto, não por aqui.
 
-      SÓ A CAPTURA DE UTM, SEM PIXEL. O bloco entregue pelo painel desta vez
-      não traz `globals` — ou seja, não define conta nenhuma numa variável
-      global e não carrega o segundo script (o pixel). Se um dia o pixel for
-      necessário, ele é um bloco separado e precisa ser pedido no painel.
+      SÃO DOIS BLOCOS, cada um decodificado do seu próprio base64: o primeiro
+      guarda os UTMs da URL de entrada, o segundo é o pixel da conta. Vieram
+      separados do painel e são instalados na ordem em que rodam.
 
       ESCRITO POR EXTENSO, e não no base64 com XOR que o painel entrega. O
       bloco de lá monta exatamente esta tag — foi decodificado antes de entrar
@@ -53,8 +52,16 @@
       async
       defer
     ></script>
-    <!-- O script acima é pedido na primeira linha; a conexão já estar de pé
-         poupa o aperto de mão de TLS. -->
+    <script>
+      // O id da conta vai numa global porque é assim que o script deles o lê —
+      // não há atributo nem parâmetro. Precisa existir ANTES de o script subir,
+      // senão o pixel arranca sem conta e fica mudo. É por isso que esta linha
+      // vem antes da tag abaixo, e não depois.
+      window.pixelId = '6a94e57dc93fd0e080baafca';
+    </script>
+    <script src="https://cdn.utmify.com.br/scripts/pixel/pixel.js" async defer></script>
+    <!-- Os dois scripts acima são pedidos na primeira linha; a conexão já
+         estar de pé poupa o aperto de mão de TLS. -->
     <link rel="preconnect" href="https://cdn.utmify.com.br">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
