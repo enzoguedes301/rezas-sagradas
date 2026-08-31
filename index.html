@@ -18,46 +18,14 @@
     <title>Sua mensagem está pronta</title>
 
     <!--
-      A UTMIFY — o rastreio desta operação (30/08/2026).
+      Este documento não carrega nenhum script de terceiro (30/08/2026).
+      O que havia aqui saiu inteiro, com os preconnect que o serviam.
 
-      Ela é quem casa o clique do anúncio com a venda que acontece na Cakto: o
-      primeiro script guarda os UTMs da URL de entrada, o segundo é o pixel da
-      conta. A venda chega até ela pelo lado da Cakto, não por aqui.
-
-      AQUI NO <head>, E NÃO INJETADO PELO JAVASCRIPT: o carimbo do anúncio só
-      existe na PRIMEIRA carga, e quanto antes o script subir, menor a chance de
-      alguém sair antes de ele guardar. Estava em src/lib/utmify.ts até hoje;
-      subir junto com o documento é uns 200 ms mais cedo.
-
-      ESCRITO POR EXTENSO, e não no formato ofuscado que o painel deles entrega.
-      O bloco de lá é um base64 com XOR que monta estas mesmas duas tags — foi
-      decodificado antes de entrar aqui, e o que ele fazia está todo à vista
-      abaixo. Duas razões: código que ninguém consegue ler não deveria rodar na
-      página que recebe o tráfego pago; e o segundo bloco chegou CORROMPIDO na
-      cópia (`globals[]` no lugar de `globals||[]`), o que teria quebrado calado.
-
-      OS ATRIBUTOS `data-utmify-prevent-*` NÃO SÃO ENFEITE: sem eles o script
-      acrescenta `xcod`, `sck` e `subid` aos links — campos de afiliado que
-      algumas plataformas leem como "esta venda é de outra pessoa". Esta
-      operação não tem afiliados.
+      Contas e ids ficam FORA deste comentário de propósito: comentário de
+      HTML vai inteiro para o navegador, como diz o cabeçalho lá em cima. O
+      registro do que saiu, e do que ainda vem de dentro do bundle, está na
+      mensagem do commit desta remoção.
     -->
-    <script
-      src="https://cdn.utmify.com.br/scripts/utms/latest.js"
-      data-utmify-prevent-xcod-sck
-      data-utmify-prevent-subids
-      async
-      defer
-    ></script>
-    <script>
-      // O id da conta vai numa global porque é assim que o script deles o lê —
-      // não há atributo nem parâmetro. Precisa existir ANTES de o script subir,
-      // senão o pixel arranca sem conta e fica mudo.
-      window.pixelId = '6a93b250765099f9ea9b9f8c';
-    </script>
-    <script src="https://cdn.utmify.com.br/scripts/pixel/pixel.js" async defer></script>
-    <!-- Adiantar o aperto de mão com o CDN da Utmify: os dois scripts acima são
-         pedidos na primeira linha, e a conexão já estar de pé poupa o TLS. -->
-    <link rel="preconnect" href="https://cdn.utmify.com.br">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -123,7 +91,7 @@
   </head>
   <!-- A cor de fundo sai de src/index.css (var --color-fundo), para acompanhar o tema. -->
   <body class="antialiased selection:bg-[#E5C158]/30">
-    <div id="root"></div>
+    <div id="root"></div>
   </body>
 </html>
 
